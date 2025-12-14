@@ -1,6 +1,7 @@
 # NOTES
 
-This document describes key technical decisions, assumptions, and known limitations for this Cypress + TypeScript E2E task against **https://demowebshop.tricentis.com**.
+This document describes key decisions, assumptions, known limitations, and one thing intentionally not implemented for this Cypress + TypeScript E2E task against **Demo Web Shop** (https://demowebshop.tricentis.com).
+
 
 ---
 
