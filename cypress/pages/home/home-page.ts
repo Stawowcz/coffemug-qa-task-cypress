@@ -1,17 +1,39 @@
 import { BasePage } from "@pages/base/base-page";
 
 export class HomePage extends BasePage {
+  // auth
   private readonly registerLink = 'a[href="/register"]';
-  private readonly loginLink = 'a[href="/login"]';
-  private readonly logoutLink = 'a[href="/logout"]';
+  public readonly loginLink = 'a[href="/login"]';
+  public readonly logoutLink = 'a[href="/logout"]';
+  public readonly accountLabel = ".account";
+
+  // search
   private readonly searchInput = "#small-searchterms";
   private readonly searchButton =
     'form[action="/search"] input[type="submit"][value="Search"]';
 
+  // cart
   public readonly cartQty = ".cart-qty";
   private readonly cartLink = "#topcartlink";
 
-  public readonly accountLabel = ".account";
+  // category navigation (Path B)
+  private readonly categoryNavigation = ".block-category-navigation";
+
+  /* -------------------------
+     Category & Subcategory
+     ------------------------- */
+
+  public getCategorySelector(categoryPath: string): string {
+    return `${this.categoryNavigation} a[href='/${categoryPath}']`;
+  }
+
+  public openCategory(categoryPath: string): void {
+    this.safeClick(this.getCategorySelector(categoryPath));
+  }
+
+  /* -------------------------
+     Navigation / Actions
+     ------------------------- */
 
   public goToPage(): void {
     super.goToPage();
@@ -25,7 +47,7 @@ export class HomePage extends BasePage {
     this.safeClick(this.loginLink);
   }
 
-  public logout(): void {
+  public clickLogout(): void {
     this.safeClick(this.logoutLink);
   }
 

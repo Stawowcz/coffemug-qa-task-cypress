@@ -1,6 +1,6 @@
-import { defineConfig } from "cypress";
+const { defineConfig } = require("cypress");
 
-export default defineConfig({
+module.exports = defineConfig({
   e2e: {
     baseUrl: "https://demowebshop.tricentis.com",
     defaultCommandTimeout: 8000,
@@ -12,7 +12,5 @@ export default defineConfig({
     videosFolder: "cypress/videos",
     video: true,
     screenshotOnRunFailure: true,
-
-    setupNodeEvents(on, config) {},
   },
 });

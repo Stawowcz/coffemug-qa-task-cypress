@@ -1,7 +1,7 @@
 import { AppUrls } from "@constants/urls/app-urls";
 import { BasePage } from "@pages/base/base-page";
 
-export class SearchPage extends BasePage {
+export class ProductListingPage extends BasePage {
   private readonly advancedSearchCheckbox = "#As";
   private readonly keywordInput = "#Q";
   private readonly categorySelect = "#Cid";
@@ -16,6 +16,8 @@ export class SearchPage extends BasePage {
   public readonly productTitles = ".product-title a";
   public readonly productPrices = ".prices";
   public readonly noResultsMessage = ".search-results .result";
+  private readonly subCategoryGrid = ".sub-category-grid";
+  public pageTitle = ".page-title h1";
 
   public goToPage(): void {
     super.goToPage(AppUrls.SEARCH);
@@ -58,5 +60,13 @@ export class SearchPage extends BasePage {
     cy.contains(".product-title a", new RegExp(`^${name}$`))
       .should("be.visible")
       .click();
+  }
+
+  public getSubCategorySelector(subCategoryPath: string): string {
+    return `${this.subCategoryGrid} h2.title a[href='/${subCategoryPath}']`;
+  }
+
+  public openSubCategory(subCategoryPath: string): void {
+    this.safeClick(this.getSubCategorySelector(subCategoryPath));
   }
 }

@@ -5,7 +5,7 @@ import { RegisterMessages } from "@constants/texts/messages/register-messages";
 import { GlobalUiTexts } from "@constants/texts/ui-texts/global-ui-texts";
 import { RegisterPage } from "@pages/auth/register-page";
 import { RegisterValidations } from "@constants/texts/validation/register-validations";
-import { UserDataGenerator } from "@data/user-data-generator";
+import { UserDataGenerator } from "@data/user-generator-data";
 
 describe("User Registration and Login", () => {
   const loginPage = new LoginPage();
@@ -41,6 +41,37 @@ describe("User Registration and Login", () => {
 
     cy.get(homePage.accountLabel).should("contain.text", email);
     cy.get(homePage.logoutLink).should("have.text", GlobalUiTexts.LOGOUT);
+  });
+
+  it("should keep user logged in after page refresh", () => {
+    const email = Cypress.env("loginEmail");
+    const password = Cypress.env("loginPassword");
+
+    homePage.openLoginPage();
+    loginPage.login(email, password);
+
+    cy.get(homePage.accountLabel).should("contain.text", email);
+    cy.get(homePage.logoutLink).should("have.text", GlobalUiTexts.LOGOUT);
+    cy.reload();
+
+    cy.get(homePage.accountLabel).should("contain.text", email);
+    cy.get(homePage.logoutLink).should("have.text", GlobalUiTexts.LOGOUT);
+  });
+
+  it("should log out the user successfully", () => {
+    const email = Cypress.env("loginEmail");
+    const password = Cypress.env("loginPassword");
+
+    homePage.openLoginPage();
+    loginPage.login(email, password);
+
+    cy.get(homePage.accountLabel).should("contain.text", email);
+    cy.get(homePage.logoutLink).should("be.visible");
+
+    homePage.clickLogout();
+
+    cy.get(homePage.loginLink).should("be.visible");
+    cy.get(homePage.logoutLink).should("not.exist");
   });
 });
 

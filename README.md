@@ -6,66 +6,84 @@ Automated end-to-end tests built with **Cypress + TypeScript** for [Demo Web Sho
 
 ## Overview
 
-This project tests main user flows of an e-commerce site:
+This project covers core e-commerce flows:
 
-- User registration and login
-- Product searching and filtering
-- Adding items to the shopping cart
-- Verifying prices and quantities
+- User Registration + validation
+- Login / session persistence / logout
+- Product discovery:
+  - Path A: Search + filters (with 0-results handling)
+  - Path B: Browse category → subcategory → PDP
+- Add to cart + cart mutations (quantity update)
+- Coupon / discount (invalid coupon validation)
 
-The framework follows a **Page Object Model (POM)** structure for modular and reusable test design.
+Architecture: **Page Object Model (POM)** + shared **utils** (e.g. cart cleanup) and optional **`cy.session`** login helper.
 
 ---
 
-## Project Structure
+# Project Structure
 
 ```
-cypress/
-├── e2e/
-│   ├── auth/
-│   │   └── register-login.spec.ts
-│   └── product/
-│       ├── product-search-and-filter.spec.ts
-│       └── add-to-cart.spec.ts
+├── cypress/
+│   ├── e2e/
+│   │   ├── auth/
+│   │   │   └── register-login.spec.ts
+│   │   ├── cart/
+│   │   │   └── cart-coupon.spec.ts
+│   │   └── product/
+│   │       ├── add-to-cart.spec.ts
+│   │       └── product-search-and-filter.spec.ts
+│   │
+│   ├── pages/
+│   │   ├── base/
+│   │   │   └── base-page.ts
+│   │   ├── auth/
+│   │   │   ├── login-page.ts
+│   │   │   └── register-page.ts
+│   │   ├── home/
+│   │   │   └── home-page.ts
+│   │   ├── product/
+│   │   │   ├── product-listing-page.ts
+│   │   │   └── product-details-page.ts
+│   │   └── cart/
+│   │       └── cart-page.ts
+│   │
+│   ├── constants/
+│   │   ├── navigation/
+│   │   │   ├── categories.ts
+│   │   │   └── subcategories.ts
+│   │   ├── urls/
+│   │   │   └── app-urls.ts
+│   │   └── texts/
+│   │       ├── ui-texts/
+│   │       │   └── global-ui-texts.ts
+│   │       ├── messages/
+│   │       │   ├── cart-messages.ts
+│   │       │   ├── register-messages.ts
+│   │       │   └── search-messages.ts
+│   │       └── validation/
+│   │           └── register-validations.ts
+│   │
+│   ├── data/
+│   │   ├── coupon-data.ts
+│   │   ├── product-data.ts
+│   │   ├── search-data.ts
+│   │   └── user-data-generator.ts
+│   │
+│   ├── utils/
+│   │   └── cart-utils.ts
+│   │
+│   ├── support/
+│   │   ├── auth-session.ts
+│   │   ├── commands.ts
+│   │   └── e2e.ts
+│   │
+│   └── types/
+│       └── user-data.ts
 │
-├── pages/
-│   ├── base/
-│   │   └── base-page.ts
-│   ├── home/
-│   │   └── home-page.ts
-│   ├── auth/
-│   │   ├── login-page.ts
-│   │   └── register-page.ts
-│   ├── product/
-│   │   ├── search-page.ts
-│   │   └── product-details-page.ts
-│   └── cart/
-│       └── cart-page.ts
-│
-├── constants/
-│   ├── urls/
-│   │   └── app-urls.ts
-│   └── texts/
-│       ├── ui-texts/
-│       │   └── global-ui-texts.ts
-│       ├── messages/
-│       │   ├── cart-messages.ts
-│       │   ├── register-messages.ts
-│       │   └── search-messages.ts
-│       └── validation/
-│           └── register-validations.ts
-│
-├── data/
-│   ├── user-data-generator.ts
-│   ├── product-data.ts
-│   └── search-data.ts
-│
-├── types/
-│   └── user-data.ts
-│
-└── support/
-    ├── e2e.ts
-    └── commands.ts
+├── cypress.config.ts
+├── cypress.env.json        # not committed
+├── package.json
+└── tsconfig.json
 ```
 
 ---
@@ -92,6 +110,7 @@ Create a `cypress.env.json` file (not committed to repo):
   "loginPassword": "example123!"
 }
 ```
+
 ---
 
 ## Running Tests

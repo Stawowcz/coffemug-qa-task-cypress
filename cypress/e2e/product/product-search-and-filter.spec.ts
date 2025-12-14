@@ -1,54 +1,61 @@
 /// <reference types="cypress" />
-import { LoginPage } from "@pages/auth/login-page";
 import { HomePage } from "@pages/home/home-page";
-import { SearchPage } from "@pages/product/search-page";
+import { ProductListingPage } from "@pages/product/product-listing-page";
 import { SearchMessages } from "@constants/texts/messages/search-messages";
 import { GlobalUiTexts } from "@constants/texts/ui-texts/global-ui-texts";
 import { AppUrls } from "@constants/urls/app-urls";
 import { SearchData } from "@data/search-data";
+import { ProductDetailsPage } from "@pages/product/product-details-page";
+import { ProductData } from "@data/product-data";
+import { CartUtils } from "@utils/cart-utils";
+import { loginWithSession } from "cypress/support/auth-session";
+import { Categories } from "@constants/navigation/categories";
+import { Subcategories } from "@constants/navigation/subcategories";
 
 describe("Product Searching and Filtering", () => {
   const homePage = new HomePage();
-  const searchPage = new SearchPage();
-  const loginPage = new LoginPage();
-  const email = Cypress.env("loginEmail");
-  const password = Cypress.env("loginPassword");
+  const productListingPage = new ProductListingPage();
+  const productDetailsPage = new ProductDetailsPage();
 
-  beforeEach(() => {
-    loginPage.goToPage();
-    loginPage.login(email, password);
-  });
+    beforeEach(() => {
+      loginWithSession()
+      cy.visit("/");
+      CartUtils.ensureEmptyCart();
+    });
 
   it("searches for electronics and applies filters when no results are found", () => {
     homePage.searchFromHeader(SearchData.ELECTRONICS);
 
     cy.get("body").then(($body) => {
       const noResults = $body
-        .find(searchPage.noResultsMessage)
+        .find(productListingPage.noResultsMessage)
         .text()
         .includes(SearchMessages.NO_RESULTS_FOUND);
 
       if (noResults) {
-        searchPage.enableAdvancedSearch();
-        searchPage.typeKeyword(SearchData.CAMERA);
-        searchPage.selectCategory(GlobalUiTexts.CATEGORY_ELECTRONICS);
-        searchPage.enableSubcategories();
-        searchPage.selectManufacturer(GlobalUiTexts.MANUFACTURER_ALL);
-        searchPage.setPriceRange(SearchData.PRICE_FROM, SearchData.PRICE_TO);
-        searchPage.enableSearchInDescriptions();
-        searchPage.clickSearch();
+        productListingPage.enableAdvancedSearch();
+        productListingPage.typeKeyword(SearchData.CAMERA);
+        productListingPage.selectCategory(GlobalUiTexts.CATEGORY_ELECTRONICS);
+        productListingPage.enableSubcategories();
+        productListingPage.selectManufacturer(GlobalUiTexts.MANUFACTURER_ALL);
+        productListingPage.setPriceRange(
+          SearchData.PRICE_FROM,
+          SearchData.PRICE_TO,
+        );
+        productListingPage.enableSearchInDescriptions();
+        productListingPage.clickSearch();
 
         cy.url().should("include", AppUrls.SEARCH);
 
-        cy.get(searchPage.productItems)
+        cy.get(productListingPage.productItems)
           .should("exist")
           .and(($items) => expect($items.length).to.be.greaterThan(0));
 
-        cy.get(searchPage.productTitles).each(($el) => {
+        cy.get(productListingPage.productTitles).each(($el) => {
           expect($el.text().toLowerCase()).to.match(/cam|camera|photo/);
         });
 
-        cy.get(searchPage.productPrices).each(($price) => {
+        cy.get(productListingPage.productPrices).each(($price) => {
           const value = parseFloat($price.text().replace(/[^0-9.]/g, ""));
           if (!isNaN(value))
             expect(value).to.be.within(
@@ -57,14 +64,52 @@ describe("Product Searching and Filtering", () => {
             );
         });
       } else {
-        cy.get(searchPage.productItems)
+        cy.get(productListingPage.productItems)
           .should("exist")
           .and(($items) => expect($items.length).to.be.greaterThan(0));
 
-        cy.get(searchPage.productTitles).each(($el) => {
+        cy.get(productListingPage.productTitles).each(($el) => {
           expect($el.text().toLowerCase()).to.contain(SearchData.ELECTRONICS);
         });
       }
     });
+  });
+  it("opens product via category and subcategory navigation", () => {
+    homePage.goToPage();
+
+    homePage.openCategory(Categories.COMPUTERS.slug);
+    cy.url().should("include", Categories.COMPUTERS.path);
+
+    productListingPage.openSubCategory(Subcategories.DESKTOPS.slug);
+    cy.url().should("include", Subcategories.DESKTOPS.path);
+
+    cy.get(productListingPage.pageTitle).should(
+      "have.text",
+      Subcategories.DESKTOPS.title,
+    );
+
+    cy.get(productListingPage.productItems)
+      .should("exist")
+      .and("have.length.greaterThan", 0);
+
+    productListingPage.openProductByName(
+      ProductData.BUILD_YOUR_OWN_COMPUTER.name,
+    );
+
+    cy.get(productDetailsPage.title).should(
+      "contain.text",
+      ProductData.BUILD_YOUR_OWN_COMPUTER.name,
+    );
+    cy.url().should("contain", ProductData.BUILD_YOUR_OWN_COMPUTER.slug);
+
+    cy.get(productDetailsPage.productPrice).should(
+      "contain.text",
+      ProductData.BUILD_YOUR_OWN_COMPUTER.price,
+    );
+
+    cy.get(productDetailsPage.productQuantity).should(
+      "have.value",
+      ProductData.BUILD_YOUR_OWN_COMPUTER.quantity,
+    );
   });
 });

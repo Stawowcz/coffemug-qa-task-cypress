@@ -1,30 +1,35 @@
 /// <reference types="cypress" />
 import { HomePage } from "@pages/home/home-page";
-import { SearchPage } from "@pages/product/search-page";
+import { ProductListingPage } from "@pages/product/product-listing-page";
 import { ProductDetailsPage } from "@pages/product/product-details-page";
 import { CartPage } from "@pages/cart/cart-page";
 import { GlobalUiTexts } from "@constants/texts/ui-texts/global-ui-texts";
 import { ProductData } from "@data/product-data";
 import { CartMessages } from "@constants/texts/messages/cart-messages";
+import { CartUtils } from "@utils/cart-utils";
+import { loginWithSession } from "cypress/support/auth-session";
 
 describe("Add to Cart - Smartphone Scenario", () => {
   const homePage = new HomePage();
-  const searchPage = new SearchPage();
+  const productListingPage = new ProductListingPage();
   const productDetailsPage = new ProductDetailsPage();
   const cartPage = new CartPage();
 
-  beforeEach(() => {
-    homePage.goToPage();
-  });
+
+    beforeEach(() => {
+      loginWithSession()
+      cy.visit("/");
+      CartUtils.ensureEmptyCart();
+    });
 
   it("should add a smartphone to the shopping cart and verify it was added", () => {
     homePage.searchFromHeader(ProductData.SMARTPHONE.name);
 
-    cy.get(searchPage.productItems)
+    cy.get(productListingPage.productItems)
       .should("exist")
       .and("have.length.greaterThan", 0);
 
-    searchPage.openProductByName(ProductData.SMARTPHONE.name);
+    productListingPage.openProductByName(ProductData.SMARTPHONE.name);
 
     productDetailsPage.addToCart();
 
@@ -58,5 +63,22 @@ describe("Add to Cart - Smartphone Scenario", () => {
         ProductData.SMARTPHONE.subtotal,
       );
     });
+  });
+
+  it("should update product quantity in the cart and recalculate totals", () => {
+    homePage.searchFromHeader(ProductData.SMARTPHONE.name);
+    productListingPage.openProductByName(ProductData.SMARTPHONE.name);
+    productDetailsPage.addToCart();
+    homePage.openCart();
+
+    cartPage.updateQuantity(2);
+    cartPage.clickUpdateCart();
+
+    cy.get(cartPage.qtyInput).should("have.value", "2");
+
+    cy.get(cartPage.subtotal).should(
+      "not.contain",
+      ProductData.SMARTPHONE.subtotal,
+    );
   });
 });
