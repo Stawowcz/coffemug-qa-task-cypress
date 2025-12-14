@@ -75,7 +75,7 @@ cypress/
 Clone this repository and install dependencies:
 
 ```bash
-git clone https://github.com/Stawowcz/SandP.git
+git clone https://github.com/Stawowcz/coffemug-qa-task-cypress.git
 cd SandP
 npm ci
 ```
