@@ -8,6 +8,11 @@ module.exports = defineConfig({
     supportFile: "cypress/support/e2e.ts",
     watchForFileChanges: false,
 
+    retries: {
+      runMode: 2,
+      openMode: 0,
+    },
+
     screenshotsFolder: "cypress/screenshots",
     videosFolder: "cypress/videos",
     video: true,
