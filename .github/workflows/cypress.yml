@@ -3,9 +3,9 @@ name: Cypress E2E Tests
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [Main]
   pull_request:
-    branches: [main]
+    branches: [Main]
 
 jobs:
   cypress-run:
