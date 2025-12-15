@@ -20,7 +20,7 @@ Architecture: **Page Object Model (POM)** + shared **utils** (e.g. cart cleanup)
 
 ---
 
-# Project Structure
+## Project Structure
 
 ```
 ├── cypress/
@@ -67,7 +67,7 @@ Architecture: **Page Object Model (POM)** + shared **utils** (e.g. cart cleanup)
 │   │   ├── coupon-data.ts
 │   │   ├── product-data.ts
 │   │   ├── search-data.ts
-│   │   └── user-data-generator.ts
+│   │   └── user-generator-data.ts
 │   │
 │   ├── utils/
 │   │   └── cart-utils.ts
@@ -80,10 +80,18 @@ Architecture: **Page Object Model (POM)** + shared **utils** (e.g. cart cleanup)
 │   └── types/
 │       └── user-data.ts
 │
+├── README.md
+├── NOTES.md
+├── .gitignore
+├── package-lock.json
 ├── cypress.config.ts
 ├── cypress.env.json        # not committed
 ├── package.json
+├── cypress.example.env.json # template
 └── tsconfig.json
+
+
+
 ```
 
 ---
@@ -95,14 +103,20 @@ Clone this repository and install dependencies:
 ```bash
 git clone https://github.com/Stawowcz/coffemug-qa-task-cypress.git
 cd coffemug-qa-task-cypress
-npm ci
+npm install
+# CI uses: npm ci
 ```
 
 ---
 
 ## Environment Variables
 
-Create a `cypress.env.json` file (not committed to repo):
+Use the committed template file `cypress.example.env.json` to create your local `cypress.env.json` (not committed).  
+Update `cypress.env.json` with valid credentials.
+
+```bash
+cp cypress.example.env.json cypress.env.json
+```
 
 ```json
 {
@@ -115,19 +129,21 @@ Create a `cypress.env.json` file (not committed to repo):
 
 ## Running Tests
 
-### Headed mode:
+### Headed mode
 
 ```bash
 npx cypress open
+npm run test:headed
 ```
 
-### Headless mode:
+### Headless mode
 
 ```bash
 npx cypress run
+npm run test:headless
 ```
 
-### Run in specific browsers:
+### Run in specific browsers
 
 Run tests in specific browsers using npm scripts defined in `package.json`:
 
@@ -135,8 +151,6 @@ Run tests in specific browsers using npm scripts defined in `package.json`:
 npm run test:chrome
 npm run test:firefox
 npm run test:edge
-npm run test:headed
-npm run test:spec
 ```
 
 ---
@@ -145,8 +159,8 @@ npm run test:spec
 
 GitHub Actions workflow automatically runs Cypress tests in **Chrome** and **Firefox** under the following conditions:
 
-- On **push** to the `main` branch
-- On **pull requests** targeting `main`
+- On **push** to the `Main` branch
+- On **pull requests** targeting `Main`
 - On **manual trigger** via the GitHub Actions tab (`workflow_dispatch`)
 
 ### CI File Location
@@ -164,5 +178,6 @@ GitHub Actions workflow automatically runs Cypress tests in **Chrome** and **Fir
   - **Firefox (headless)**
 - Uploads Cypress videos and screenshots as workflow artifacts
 - Reports test results directly in the **GitHub Actions** tab
+- Uses retry logic to reduce flaky failures (retries.runMode = 2, retries.openMode = 0 in cypress.config.ts)
 
 ---

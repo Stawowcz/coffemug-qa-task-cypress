@@ -33,7 +33,7 @@ export class BasePage {
       .select(value, { force: true });
   }
 
-  protected expectUrlContains(partialUrl: string): void {
+  public expectUrlContains(partialUrl: string): void {
     cy.url().should("include", partialUrl);
   }
 }

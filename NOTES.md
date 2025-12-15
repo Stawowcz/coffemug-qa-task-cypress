@@ -1,4 +1,4 @@
-# NOTES
+## NOTES
 
 This document describes key decisions, assumptions, known limitations, and one thing intentionally not implemented for this Cypress + TypeScript E2E task against **Demo Web Shop** (https://demowebshop.tricentis.com).
 
@@ -55,7 +55,7 @@ This document describes key decisions, assumptions, known limitations, and one t
 
 - **Selector specificity for coupon validation message**: the demo shop uses a generic `.message` class, so the selector is not as strict as ideal. If the page later introduces multiple messages, this may need refinement (e.g. scoping within the coupon section).
 - **Cart cleanup via UI** adds a small time cost (open cart + update). For a real project, a faster backend reset (API) would be preferred if available.
-- **Limited assertions around totals recalculation**: cart mutation test checks subtotal changes and quantity updates; it does not fully recompute and validate all totals (tax/shipping), because the demo shop’s totals can vary with configuration and are not the focus of this task.
+- **Limited assertions around totals recalculation**: cart mutation test checks subtotal changes and quantity updates; it does not fully recompute and validate tax/shipping/grand total, because these totals can vary with demo shop configuration and are not the focus of this task.
 - **Filters coverage** is based on what is present on the demo shop. Some categories do not expose rich filters; therefore, the search scenario uses the available advanced search + price range.
 
 ---

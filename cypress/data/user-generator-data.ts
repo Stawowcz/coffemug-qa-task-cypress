@@ -13,7 +13,7 @@ export class UserDataGenerator {
       email: faker.internet.email(),
       password,
       confirmPassword: password,
-      gender: "male",
+      gender: faker.helpers.arrayElement(["male", "female"]),
     };
 
     return { ...defaultData, ...overrides };

@@ -45,7 +45,8 @@ describe("Product Searching and Filtering", () => {
         productListingPage.enableSearchInDescriptions();
         productListingPage.clickSearch();
 
-        cy.url().should("include", AppUrls.SEARCH);
+        productListingPage.expectUrlContains(AppUrls.SEARCH);
+
 
         cy.get(productListingPage.productItems)
           .should("exist")
@@ -78,10 +79,12 @@ describe("Product Searching and Filtering", () => {
     homePage.goToPage();
 
     homePage.openCategory(Categories.COMPUTERS.slug);
-    cy.url().should("include", Categories.COMPUTERS.path);
+    homePage.expectUrlContains(Categories.COMPUTERS.path);
+
 
     productListingPage.openSubCategory(Subcategories.DESKTOPS.slug);
-    cy.url().should("include", Subcategories.DESKTOPS.path);
+    productListingPage.expectUrlContains(Subcategories.DESKTOPS.path);
+
 
     cy.get(productListingPage.pageTitle).should(
       "have.text",
@@ -100,7 +103,8 @@ describe("Product Searching and Filtering", () => {
       "contain.text",
       ProductData.BUILD_YOUR_OWN_COMPUTER.name,
     );
-    cy.url().should("contain", ProductData.BUILD_YOUR_OWN_COMPUTER.slug);
+    productDetailsPage.expectUrlContains(ProductData.BUILD_YOUR_OWN_COMPUTER.slug);
+
 
     cy.get(productDetailsPage.productPrice).should(
       "contain.text",

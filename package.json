@@ -8,7 +8,8 @@
     "test:chrome": "npx cypress run --browser chrome",
     "test:firefox": "npx cypress run --browser firefox",
     "test:edge": "npx cypress run --browser edge",
-    "test:headed": "npx cypress open"
+    "test:headed": "npx cypress open",
+    "test:headless": "npx cypress run"
   },
   "keywords": [],
   "author": "",

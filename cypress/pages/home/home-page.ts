@@ -1,27 +1,18 @@
 import { BasePage } from "@pages/base/base-page";
 
 export class HomePage extends BasePage {
-  // auth
   private readonly registerLink = 'a[href="/register"]';
   public readonly loginLink = 'a[href="/login"]';
   public readonly logoutLink = 'a[href="/logout"]';
   public readonly accountLabel = ".account";
-
-  // search
   private readonly searchInput = "#small-searchterms";
   private readonly searchButton =
     'form[action="/search"] input[type="submit"][value="Search"]';
 
-  // cart
   public readonly cartQty = ".cart-qty";
   private readonly cartLink = "#topcartlink";
 
-  // category navigation (Path B)
   private readonly categoryNavigation = ".block-category-navigation";
-
-  /* -------------------------
-     Category & Subcategory
-     ------------------------- */
 
   public getCategorySelector(categoryPath: string): string {
     return `${this.categoryNavigation} a[href='/${categoryPath}']`;
@@ -30,10 +21,6 @@ export class HomePage extends BasePage {
   public openCategory(categoryPath: string): void {
     this.safeClick(this.getCategorySelector(categoryPath));
   }
-
-  /* -------------------------
-     Navigation / Actions
-     ------------------------- */
 
   public goToPage(): void {
     super.goToPage();
